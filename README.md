@@ -1,0 +1,2 @@
+# Curtis
+ Cortex Discord Bot
