@@ -15,11 +15,7 @@ public class Main {
         JDA jda = new JDABuilder(args[0]).build();
         UserAgent userAgent = new UserAgent("bot", "me.Damascus2000", "v0.1", "Damascus2000");
         Credentials credentials = Credentials.script(args[1], args[2], "r6tA4vZG-LUtsA", "myC1yQrfJJj5T4jMtbrGfqXLxqU");
-
-        // This is what really sends HTTP requests
         NetworkAdapter adapter = new OkHttpNetworkAdapter(userAgent);
-        //this is a test
-        // Authenticate and get a RedditClient instance
         RedditClient reddit = OAuthHelper.automatic(adapter, credentials);
         jda.addEventListener(new Reddit(reddit));
     }
