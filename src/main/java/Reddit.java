@@ -3,12 +3,14 @@ import net.dean.jraw.models.*;
 import net.dean.jraw.pagination.BarebonesPaginator;
 import net.dean.jraw.pagination.DefaultPaginator;
 import net.dean.jraw.references.SubredditReference;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.restaction.pagination.MessagePaginationAction;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,33 +55,49 @@ public class Reddit extends ListenerAdapter {
             }
             e.getChannel().sendMessage(eb.build()).queue();
 
-        } else if (words.length == 2 && words[0].equalsIgnoreCase("!amount")) {
+        }
+        else if (words.length == 2 && words[0].equalsIgnoreCase("!amount")) {
             //e.getChannel().sendMessage(String.format("Now: %s \n Sunday two weeks ago: %s", e.getMessage().getCreationTime().toLocalDate().toString(), LocalDate.now().with(previous(SUNDAY)).minusDays(7))).queue();
             int weekone = 0;
             int weektwo = 0;
             //int ch = 0;
             //List<TextChannel> channels = e.getChannel().getGuild().getTextChannels();
-            e.getChannel().sendMessage("Calculating :hourglass_flowing_sand: this may take a while").queue(m -> message = m);
+            e.getChannel().sendMessage("Calculating :hourglass_flowing_sand: this may take a while").queue(this::setMessage);
             Member user =  e.getChannel().getGuild().getMemberById(words[1]);
             LocalDate twosunday = LocalDate.now().with(previous(SUNDAY)).minusDays(7);
             LocalDate sunday = LocalDate.now().with(previous(SUNDAY));
-            for (TextChannel ch : e.getChannel().getGuild().getTextChannels()){
-                for (Message message : ch.getIterableHistory()) {
-                    if (message.getMember() == user) {
-                        LocalDate messagedate = message.getCreationTime().toLocalDate();
-                        if ((messagedate.isAfter(twosunday) && messagedate.isBefore(sunday) )|| messagedate.isEqual(sunday)){
-                            weekone++;
-                        } else if (messagedate.isAfter(sunday)){
-                            weektwo++;
+                for (TextChannel ch : e.getChannel().getGuild().getTextChannels()) {
+                    MessagePaginationAction mpa = ch.getIterableHistory();
+                    for (Message message : mpa) {
+                        if (message.getMember() == user) {
+                            LocalDate messagedate = message.getTimeCreated().toLocalDate();
+                            if ((messagedate.isAfter(twosunday) && messagedate.isBefore(sunday)) || messagedate.isEqual(sunday)) {
+                                weekone++;
+                            } else if (messagedate.isAfter(sunday)) {
+                                weektwo++;
+                            }
                         }
                     }
+                    //ch++;
+                    System.out.println(ch.getName());
                 }
-                //ch++;
-                System.out.println(ch.getName());
-            }
+
             e.getChannel().sendMessage("Amount of messages sent by :" +  user.getAsMention() + String.format("\nPrevious week: %d\nThis week: %d", weekone, weektwo)).queue();
             e.getMessage().delete().queue();
             message.delete().queue();
         }
+        else if (words.length == 1 && words[0].equalsIgnoreCase("!help")){
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setColor(Color.orange);
+            eb.setTitle("Curtis Commands");
+            eb.addField("!reddit", "Gets you some plugin ideas (pulled from r/minecraftsuggestions)", false);
+            eb.addField("!help", "Shows this overview", false);
+            eb.setFooter("This is still a WIP, more features coming soon");
+            e.getChannel().sendMessage(eb.build()).queue();
+        }
+    }
+
+    public void setMessage(Message m){
+        message = m;
     }
 }
