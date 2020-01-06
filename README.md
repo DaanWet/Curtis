@@ -1,2 +1,2 @@
 # Curtis
- Cortex Discord Bot
+ Discord bot of Cortex Development
