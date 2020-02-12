@@ -1,3 +1,5 @@
+package com.cortexdevelopment.curtis.core;
+
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.http.NetworkAdapter;
 import net.dean.jraw.http.OkHttpNetworkAdapter;
@@ -13,12 +15,22 @@ import net.dv8tion.jda.api.entities.Activity;
  */
 public class Main {
 
+    private static RedditClient redditClient;
+
+
     public static void main(String[] args) throws Exception {
-        JDA jda = new JDABuilder(args[0]).setActivity(Activity.listening("!help")).build();
         UserAgent userAgent = new UserAgent("bot", "me.Damascus2000", "v0.1", "Damascus2000");
         Credentials credentials = Credentials.script(args[1], args[2], "r6tA4vZG-LUtsA", "myC1yQrfJJj5T4jMtbrGfqXLxqU");
         NetworkAdapter adapter = new OkHttpNetworkAdapter(userAgent);
-        RedditClient reddit = OAuthHelper.automatic(adapter, credentials);
-        jda.addEventListener(new Reddit(reddit));
+        redditClient = OAuthHelper.automatic(adapter, credentials);
+        JDA jda = new JDABuilder(args[0]).setActivity(Activity.listening("!help")).build();
+        jda.addEventListener(new MessageListener());
+    }
+
+
+    public static RedditClient getRedditClient(){
+        return redditClient;
     }
 }
+
+
