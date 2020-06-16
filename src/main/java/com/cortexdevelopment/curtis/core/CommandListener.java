@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class CommandListener {
 
@@ -13,7 +14,7 @@ public class CommandListener {
     public CommandListener(){
         Help hc = new Help();
         commands = new ArrayList<>(Arrays.asList(
-                new Reddit(), new MessageCount(), hc, new JavaDocs()
+                new Reddit(), new MessageCount(), hc, new JavaDocs(), new BuildCommand()
         ));
         hc.setCommands(commands);
     }
@@ -22,10 +23,13 @@ public class CommandListener {
     public void onCommandReceived(GuildMessageReceivedEvent e){
         String message = e.getMessage().getContentRaw();
         String[] words = message.split(" ");
-        String command = words[0].substring(1);
+        String[] parts = words[0].substring(1).split("\\.");
         for (Command c : commands){
-            if (c.isCommandFor(command)){
-                c.run(Arrays.copyOfRange(words, 1, words.length), e);
+
+            if (c.isCommandFor(parts[0])){
+                String[] args = Stream.concat(Arrays.stream(parts, 1, parts.length), Arrays.stream(words, 1, words.length))
+                        .toArray(String[]::new);
+                c.run(args, e);
             }
         }
     }

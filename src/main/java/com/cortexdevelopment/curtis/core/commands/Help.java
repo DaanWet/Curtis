@@ -14,7 +14,7 @@ public class Help extends Command {
     private ArrayList<Command> commands;
 
     public Help(){
-        name = "Help";
+        name = "help";
         aliases = new String[]{"commands", "command", "h", "test"};
     }
 
@@ -24,7 +24,6 @@ public class Help extends Command {
 
     @Override
     public void run(String[] args, GuildMessageReceivedEvent e) {
-        System.out.println("yeet");
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("Curtis Commands");
         Map<String, StringBuilder> sbs = new HashMap<>();
@@ -35,9 +34,13 @@ public class Help extends Command {
                     sbs.put(cat, new StringBuilder());
                 }
                 StringBuilder sb = sbs.get(cat);
-                sb.append(String.format("\n!%s[", c.getName()));
+                String[] als = c.getAliases();
+                sb.append(String.format("\n!%s%s", c.getName(), als.length > 0 ? "[" : ""));
                 Arrays.stream(c.getAliases()).forEach(alias -> sb.append(alias).append(", "));
-                sb.delete(sb.length() - 2, sb.length()).append(String.format("]: *%s*", c.getDescription()));
+                if (als.length > 0){
+                    sb.delete(sb.length() - 2, sb.length());
+                }
+                sb.append(String.format("%s: *%s*", als.length > 0 ? "]" : "" ,c.getDescription().trim()));
             }
         }
         eb.setColor(Color.ORANGE);

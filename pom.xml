@@ -18,6 +18,22 @@
                 </configuration>
             </plugin>
             <plugin>
+                <!-- Build an executable JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.mypackage.MyClass</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.1</version>
@@ -26,7 +42,7 @@
                     <transformers>
                         <transformer implementation=
                                              "org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>core.Main</mainClass>
+                            <mainClass>com.cortexdevelopment.curtis.core.Main</mainClass>
                         </transformer>
                     </transformers>
                 </configuration>
@@ -45,19 +61,24 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.0.0_62</version>
+            <version>4.1.1_115</version>
         </dependency>
         <dependency>
             <groupId>net.dean.jraw</groupId>
             <artifactId>JRAW</artifactId>
             <version>1.1.0</version>
         </dependency>
-        <!--<dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>-->
+        <dependency>
+            <groupId>com.jfrog.bintray.client</groupId>
+            <artifactId>bintray-client-java-api</artifactId>
+            <version>0.9.2</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>junit</groupId>-->
+<!--            <artifactId>junit</artifactId>-->
+<!--            <version>4.12</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <!-- our scraping library -->
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -69,7 +90,7 @@
         <repository>
             <id>jcenter</id>
             <name>jcenter-bintray</name>
-            <url>http://jcenter.bintray.com</url>
+            <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
 
